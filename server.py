@@ -6,16 +6,16 @@ from bottle import route, run, template
 ##not actually sure where it should go
 ##http://bottlepy.org/docs/dev/tutorial.html#quickstart-hello-world
 
-
-##@route('/own_board.html')
-##def own_board():
-##    return "Hello World!"
-##run(host='localhost', port=5000)
-
-@route('/opponent_board.html')
-def opponent_board():
-    return "Hello World!"
+##goes to either
+@route('/<board>')
+def go(board):
+    if(board == 'own_board.html'):
+        return "Hello Own"
+    elif(board == 'opponent_board.html'):
+        return "Hello Opponent"
 run(host='localhost', port=5000)
+
+
 
 
 
