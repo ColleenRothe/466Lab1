@@ -1,4 +1,3 @@
-#client.py
 import sys
 import urllib
 #import httplib
@@ -8,7 +7,7 @@ import http.client
 
 ipadd = sys.argv[1]
 port = sys.argv[2]
-x = sys.argv[3] #need to be ints to do the testing
+x = sys.argv[3]  
 y = sys.argv[4]
 
 #body data
@@ -17,10 +16,8 @@ headers = {"Content-type": "application/x-www-form-urlencoded", "Content-length"
 conn = http.client.HTTPConnection(ipadd, port)
 conn.request("POST", "", params, headers)
 response = conn.getresponse()
-print("RESPONSE IS")
 print(response.status, response.reason)
 answer = str(response.read())
-print("ANSWER IS")
 print(answer)
 #look for each part of message in the answer
 #message will be hit=1(hit) or 0(miss). if sink, also sink=C,B,R,S,D
@@ -31,30 +28,16 @@ print(answer)
 for thing in answer:
     if thing == '0':
         #you missed it
-        print("miss")
-        params = urllib.parse.urlencode({'x': x, 'y': y, 'hit': '0'})
+        param = urllib.parse.urlencode({'x': x, 'y': y , 'hit': '0'})
+        #send back to server to update the opponent board
+        headers = {"Content-type": "application/x-www-form-urlencoded", "Content-length": "13"} #update length!!
+        conn.request("POST", "/sendback", param, headers)
     if thing == '1':
         #you hit it
-        print("hit")
-        params = urllib.parse.urlencode({'x': x, 'y': y, 'hit': '0'})
-    #rest of the prints to test
-    if thing == 'C':
-        print("carrier sunk")
-    if thing == 'B':
-        print("battleship sunk")
-    if thing == 'R':
-        print("cRuiser sunk")
-    if thing == 'S':
-        print("submarine sunk")
-    if thing == 'D':
-        print("destroyer sunk")
-
-#conn = http.client.HTTPConnection('localhost', port) #new connection?
-conn.request("POST", "/sendback", params, headers) #send stuff back
-conn.close #close connection
-
-
-    
-    
-
+        param = urllib.parse.urlencode({'x': x, 'y': y, 'hit': '1'})
+        #send back to server to update the opponent board
+        headers = {"Content-type": "application/x-www-form-urlencoded", "Content-length": "13"} #update length!
+        conn.request("POST", "/sendback", param, headers)
+  
+conn.close() #close connection
 
