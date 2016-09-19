@@ -128,7 +128,7 @@ def own_board(): #<tr> = row containing 1+ <td>elements
     for i in range(0,10):
         board +=str("<tr>") #new row
         for j in range(0,10):
-            board +=str("<td>") + str(ownboard[i][j]) + str("<td>") #new thing
+            board +=str("<td>") + str(ownboard[i][j]) + str("</td>") #new thing
         board +=str("</tr>") #new row
     board += str("<table>") #end table
     return board
@@ -140,7 +140,7 @@ def opponent_board(): #<tr> = row containing 1+ <td>elements
     for i in range(0,10):
         board +=str("<tr>") #new row
         for j in range(0,10):
-            board +=str("<td>") + str(opponentboard[i][j]) + str("<td>") #new thing
+            board +=str("<td>") + str(opponentboard[i][j]) + str("</td>") #new thing
         board +=str("</tr>") #new row
     board += str("<table>") #end table
     return board
