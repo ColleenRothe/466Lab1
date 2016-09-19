@@ -1,1 +1,43 @@
+POST Request Message:
+POST / HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
 
+
+x=5&y=7
+
+
+---------------------------------------
+We took out the content length header because it did not allow for out of bound messages
+---------------------------------------
+Response Message OK:
+HTTP/1.1/ 200 OK
+
+
+hit=1&sink=D
+
+
+---------------------------------------
+Response Message ERROR Out of Bounds:
+HTTP/1.1/ 404 Out of Bounds
+
+
+---------------------------------------
+Response Message Bad Request:
+HTTP/1.1/ 400 Bad Request
+
+
+---------------------------------------
+Response Message Already Asked:
+HTTP/1.1/ 410 Gone
+
+
+---------------------------------------
+Send-back Message:
+POST / HTTP/1.1
+Content-Type: application/x-www-form-urlencoded
+
+
+x=5&y=7&hit=1
+
+
+---------------------------------------
