@@ -14,8 +14,16 @@ from urllib import parse
 port = sys.argv[1]
 file = sys.argv[2]
 
+# sink stuff
+class Sink:
+    def __init__(self,cn,bn,rn,sn,dn):
+        self.c=cn
+        self.b=bn
+        self.r=rn
+        self.s=sn
+        self.d=dn
 
-
+nums = Sink(0,0,0,0,0)
 
 #create own board
 ownboard = []
@@ -30,7 +38,7 @@ for i in range(0,10):
 opponentboard = [['_' for n in range(0,10)] for n in range (0, 10)]
 
 #start bottle
-app= Bottle()
+app = Bottle()
 
 #need to deal with:
 #out of bounds: HTTP Not Found
@@ -38,22 +46,14 @@ app= Bottle()
 #bad format: HTTP Bad Request (not an int?)
 @app.post('/')
 def process_action():
-    x=request.POST['x']
-    y=request.POST['y']
-
-    #for the sinks..where to put? not here!
-    cnum = 0
-    bnum = 0
-    rnum = 0
-    snum = 0
-    dnum = 0
-   
+    x=request.POST['y'] #need to be opposite
+    y=request.POST['x']
 
     try: #have to do first so it can be int for the rest
         x=int(x)
         y=int(y)
     except ValueError:
-        print("GOT UP HERE")
+        print("GOT Here First")
         response.status = 400 #bad request
         return
     if x == '10' or y>=10 or x<0 or y<0:
@@ -70,46 +70,57 @@ def process_action():
         response.status = 410
         return
     else:
-        #hit something....
-        ownboard[x][y] = "X"
+        #hit something
 
         if ownboard[x][y] == "C":
-            cnum+=1
+            nums.c +=1
         elif ownboard[x][y] == "B":
-            bnum+=1
+            nums.b +=1
         elif ownboard[x][y] == "R":
-            rnum +=1
+            nums.r +=1
         elif ownboard[x][y] == "S":
-            snum +=1
+            nums.s +=1
         elif ownboard[x][y] == "D":
-            dnum +=1
+            nums.d +=1
 
-        if cnum == 5:
+        #hit
+        ownboard[x][y] = "X"
+
+        if nums.c== 5:
             return parse.urlencode({'hit':1, 'sink':'C'})
-        elif bnum == 4:
+        elif nums.b == 4:
              return parse.urlencode({'hit':1, 'sink':'B'})
-        elif rnum == 3:
+        elif nums.r == 3:
              return parse.urlencode({'hit':1, 'sink':'R'})
-        elif snum == 3:
+        elif nums.s== 3:
              return parse.urlencode({'hit':1, 'sink':'S'})
-        elif dnum == 2:
+        elif nums.d == 2:
              return parse.urlencode({'hit':1, 'sink':'D'})
         else:
             return parse.urlencode({'hit':1})
-
-            
 #doesn't exactly work
 @app.post('/sendback')
 def do_opponent():
-    x1=request.POST['x']
-    y1=request.POST['y']
+    y=request.POST['x']
+    x=request.POST['y']
     hit=request.POST['hit']
-    print("X IS")
-    print(x1)
-    #do more here...copy same idea from above to update opponent board
-    
-
-
+   #copy same stuff from above
+    try: #have to do first so it can be int for the rest
+        x=int(x)
+        y=int(y)
+    except ValueError:
+        print("GOT UP HERE")
+        response.status = 400 #bad request
+        return
+    if x == '10' or y>=10 or x<0 or y<0:
+        print("GOT HERE")
+        response.status = 404 #out of bounds
+        return
+    #look at board...
+    if(hit == '0'): #miss
+        opponentboard[x][y] = 'O'
+    else:
+        opponentboard[x][y] = 'X' #hit
 #show own board
 @app.get('/own_board.html')
 def own_board(): #<tr> = row containing 1+ <td>elements
